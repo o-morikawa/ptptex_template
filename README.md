@@ -3,7 +3,8 @@
 A minimal **PTEP-style** LaTeX template (with a preprint option) centered on a conservative, submission-friendly workflow.
 
 This repository intentionally ships as a **self-contained directory**: download the whole repository and compile `main.tex`.  
-The template is **not** aimed at LaTeX beginners.
+The template is **not** aimed at LaTeX beginners. As a LaTeX writing style, see
+https://sites.google.com/view/o-morikawa/latex
 
 ## What to download / what to edit
 
