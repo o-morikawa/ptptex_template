@@ -17,6 +17,16 @@ Download **all files** in this repository (as a ZIP, or via `git clone`) and kee
 
 If you use a bibliography, prepare `ref.bib` (or change `\bibliography{ref}` in `main.tex`).
 
+### (Optional) Complile
+
+Added the compilation helper script texbuild.
+
+- A script for automating compilation
+- Engine selection based on a header directive (`%#! latex-command` at the beginning of the file)
+- Automatic BibTeX execution
+- Recompilation control
+- SyncTeX option support
+
 ## Why macros are bundled inside the class
 
 From a programming/design standpoint, separating personal macros into a dedicated `*.sty` is usually cleaner.
