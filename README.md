@@ -27,6 +27,8 @@ Added the compilation helper script texbuild.
 - Recompilation control
 - SyncTeX option support
 
+`texbuild main.tex`
+
 ## Why macros are bundled inside the class
 
 From a programming/design standpoint, separating personal macros into a dedicated `*.sty` is usually cleaner.
