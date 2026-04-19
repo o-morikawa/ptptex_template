@@ -27,7 +27,7 @@ Added the compilation helper script texbuild.
 - Recompilation control
 - SyncTeX option support
 
-`texbuild main.tex`
+How to use: `chmod +x texbuild` and `texbuild main.tex`
 
 ## Why macros are bundled inside the class
 
