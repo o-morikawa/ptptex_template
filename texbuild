@@ -1,0 +1,161 @@
+#!/bin/bash
+set -u
+
+usage() {
+  printf '%s\n' "usage: texbuild FILE.tex" >&2
+  exit 1
+}
+
+confirm_non_tex() {
+  local reply
+  printf '%s' "input does not end with .tex. continue? [y/N] " >&2
+  read -r reply || true
+  case "$reply" in
+    y|Y|yes|YES|Yes)
+      return 0
+      ;;
+    *)
+      printf '%s\n' "aborted." >&2
+      exit 1
+      ;;
+  esac
+}
+
+run_cmd() {
+  printf '%s\n' "+ $*"
+  "$@"
+}
+
+run_latex_pass() {
+  local engine=$1
+  run_cmd "$engine" -interaction=nonstopmode -file-line-error -synctex=1 "$texfile"
+}
+
+run_bibtex_if_needed() {
+  local auxfile
+  auxfile="${base}.aux"
+
+  if [ -f "$auxfile" ]; then
+    if grep -Eq '^(\\citation|\\bibdata|\\abx@aux@cite)' -- "$auxfile"; then
+      printf '%s\n' "[bibtex]"
+      run_cmd bibtex "$base"
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+need_rerun() {
+  local logfile
+  logfile="${base}.log"
+
+  if [ ! -f "$logfile" ]; then
+    return 1
+  fi
+
+  if grep -Eiq \
+    '(Rerun to get cross-references right|LaTeX Warning: Label\(s\) may have changed|LaTeX Warning: Citation.*undefined|Package biblatex Warning: Please \(re\)run|Writing index file|Table widths have changed|rerun LaTeX|undefined references)' \
+    -- "$logfile"
+  then
+    return 0
+  fi
+
+  return 1
+}
+
+run_until_stable() {
+  local engine=$1
+  local max_runs=5
+  local n=1
+  local bib_ran=1
+
+  run_latex_pass "$engine"
+
+  if run_bibtex_if_needed; then
+    bib_ran=0
+    run_latex_pass "$engine"
+    n=2
+  fi
+
+  while [ "$n" -lt "$max_runs" ]; do
+    if need_rerun; then
+      n=$((n + 1))
+      printf '%s\n' "[rerun $n/$max_runs]"
+      run_latex_pass "$engine"
+    else
+      break
+    fi
+  done
+
+  if need_rerun; then
+    printf '%s\n' "warning: document may still need another LaTeX run." >&2
+    return 2
+  fi
+
+  return 0
+}
+
+run_pdflatex_mode() {
+  printf '%s\n' "[pdflatex mode]"
+  run_until_stable pdflatex
+}
+
+run_platex_mode() {
+  printf '%s\n' "[platex mode]"
+  run_until_stable platex
+  run_cmd dvipdfmx "${base}.dvi"
+}
+
+run_uplatex_mode() {
+  printf '%s\n' "[uplatex mode]"
+  run_until_stable uplatex
+  run_cmd dvipdfmx "${base}.dvi"
+}
+
+if [ $# -lt 1 ]; then
+  usage
+fi
+
+texfile=$1
+
+if [ ! -f "$texfile" ]; then
+  printf '%s\n' "file not found: $texfile" >&2
+  exit 1
+fi
+
+case "$texfile" in
+  *.tex) ;;
+  *)
+    confirm_non_tex
+    ;;
+esac
+
+base=${texfile%.tex}
+engine="pdflatex"
+
+first_lines="$(head -n 20 -- "$texfile")"
+
+if printf '%s\n' "$first_lines" | grep -Eq '^%#![[:space:]]*uplatex([[:space:]]|$)'; then
+  engine="uplatex"
+elif printf '%s\n' "$first_lines" | grep -Eq '^%#![[:space:]]*platex([[:space:]]|$)'; then
+  engine="platex"
+elif printf '%s\n' "$first_lines" | grep -Eq '^%#![[:space:]]*pdflatex([[:space:]]|$)'; then
+  engine="pdflatex"
+fi
+
+case "$engine" in
+  pdflatex)
+    run_pdflatex_mode
+    ;;
+  platex)
+    run_platex_mode
+    ;;
+  uplatex)
+    run_uplatex_mode
+    ;;
+  *)
+    printf '%s\n' "unknown engine: $engine" >&2
+    exit 1
+    ;;
+esac
