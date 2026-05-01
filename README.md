@@ -83,12 +83,12 @@ Auto-sized (good for display math):
 
 Use these to avoid things like `V_{eff}` being read as a product of variables:
 
-- `\vsub{V}{eff}` → $begin:math:text$V\_\{\\mathrm\{eff\}\}$end:math:text$
-- `\vsup{T}{c}` → $begin:math:text$T\^\{\\mathrm\{c\}\}$end:math:text$
+- `\vsub{V}{eff}` → \(V_{\mathrm{eff}}\)
+- `\vsup{T}{c}` → \(T^{\mathrm{c}}\)
 
 ### Quantity + unit
 
-- `\unit{10}{GeV}` → $begin:math:text$10\\\,\\mathrm\{GeV\}$end:math:text$
+- `\unit{10}{GeV}` → \(10\,\mathrm{GeV}\)
 
 ### Feynman slash
 
