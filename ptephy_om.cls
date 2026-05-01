@@ -23,6 +23,10 @@
 \newif\ifpteplogo
 \newif\ifpreprint
 
+%% OM SETTING
+\newif\ifpte@showcomments\pte@showcommentsfalse % comment-mode
+\newif\ifpte@showrevision\pte@showrevisionfalse % revisions highlighted
+
 \DeclareOption{erratum}{\erratumtrue}
 \DeclareOption{letterpaper}{\letterpapertrue}
 \DeclareOption{copyedit}{\copyedittrue}
@@ -50,6 +54,11 @@
 %\DeclareOption{preprint}{\InputIfFileExists{ptephy.clo}{\typeout{-----Reading ptephy.clo-----}}%
 %{\ClassError{PTPTeX}{This class file needs the file named ``ptephy.clo'' in case the option `preprint' is specified.}{Please ensure the file is exist in proper location.}}}
 
+%% OM SETTING
+\DeclareOption{comments}{\pte@showcommentstrue}
+\DeclareOption{nocomments}{\pte@showcommentsfalse}
+\DeclareOption{revision}{\pte@showrevisiontrue}
+\DeclareOption{norevision}{\pte@showrevisionfalse}
 
 \ExecuteOptions{a4paper,centre,info,proofbox}
 
@@ -65,7 +74,7 @@
 \usepackage{multicol}
 
 \usepackage{comment}
-\usepackage{color}
+\usepackage{xcolor}
 \specialcomment{authorquery}{\begingroup\textcolor{red}}{\endgroup}
 
 \newcommand\preprintnumber[2][30mm]{\gdef\@preprtnumwidth{#1}\gdef\@preprtnum{#2}}
@@ -1565,11 +1574,48 @@
 
 
 
-%% MY SETTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% OM SETTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% Comment-mode %%%%%%%%%%%%%%%%%%%%%
+\ifpte@showcomments
+  \newcommand{\pteCmt}[3]{\textcolor{#1}{[#2: #3]}}
+\else
+  \newcommand{\pteCmt}[3]{}
+\fi
+
+\newcommand{\cmtOM}[1]{\pteCmt{teal}{OM}{#1}}
+%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%% Revisions highlighted %%%%%%%%%%%%%%%%%%%%%
+\newcount\pte@revisionnum
+\pte@revisionnum=1
+
+\newcommand{\revisionnum}[1]{%
+  \pte@revisionnum=#1\relax
+}
+
+\providecommand{\pteRevColor}{magenta}
+
+\newcommand{\rev}[2]{%
+  \ifpte@showrevision
+    \ifnum#1=\pte@revisionnum
+      \textcolor{\pteRevColor}{#2}%
+    \else
+      #2%
+    \fi
+  \else
+    #2%
+  \fi
+}
+
+\newcommand{\revone}[1]{\rev{1}{#1}}
+\newcommand{\revtwo}[1]{\rev{2}{#1}}
+\newcommand{\revthree}[1]{\rev{3}{#1}}
+%%%%%%%%%%%%%%%%%%%%%
+
 %% AMS
 \usepackage{amsmath,amssymb,amsfonts,mathtools}
 %% Other packages
-\usepackage{graphicx,xcolor}
+\usepackage{graphicx}
 \usepackage{bm}
 %% Equation number
 \numberwithin{equation}{section}
@@ -1617,5 +1663,8 @@
 \newcommand{\cyan}[1]{\textcolor{cyan}{#1}}
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
 \newcommand{\teal}[1]{\textcolor{teal}{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
