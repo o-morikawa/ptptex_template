@@ -45,7 +45,7 @@ If your environment allows a cleaner split, feel free to move the macro block ou
 
 ## Minimal macro set (quick reference)
 
-The following convenience macros are defined in `ptephy_om.cls` under `%% MY SETTING` (near the end of the file).
+The following convenience macros are defined in `ptephy_om.cls` under `%% OM SETTING` (near the end of the file).
 
 ### Operators
 
