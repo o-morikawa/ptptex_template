@@ -206,6 +206,14 @@ whereas
 
 is printed as ordinary text.
 
+For convenience, the following shortcuts are also defined:
+
+```tex
+\revone{...}    % equivalent to \rev{1}{...}
+\revtwo{...}    % equivalent to \rev{2}{...}
+\revthree{...}  % equivalent to \rev{3}{...}
+```
+
 For a clean version, use
 
 ```tex
