@@ -8,7 +8,7 @@ https://sites.google.com/view/o-morikawa/latex
 
 ## What to download / what to edit
 
-Download **all files** in this repository (as a ZIP, or via `git clone`) and keep them in the same directory:
+Download **the following files** in this repository (as a ZIP, or via `git clone`) and keep them in the same directory:
 
 - `main.tex` — the entry point (edit this)
 - `ptephy_om.cls` — the class file (includes a small set of personal “minimal macros”)
@@ -16,7 +16,6 @@ Download **all files** in this repository (as a ZIP, or via `git clone`) and kee
 - `natbib.sty`, `authblk-TI.sty` — bundled for portability / submission systems
 
 If you use a bibliography, prepare `ref.bib` (or change `\bibliography{ref}` in `main.tex`).
-
 
 ### (Optional) .sty file
 
