@@ -17,6 +17,7 @@ Download **all files** in this repository (as a ZIP, or via `git clone`) and kee
 
 If you use a bibliography, prepare `ref.bib` (or change `\bibliography{ref}` in `main.tex`).
 
+
 ### (Optional) .sty file
 
 Added the minimal-macro style file `omphys.sty` for other class files.
