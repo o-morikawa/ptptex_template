@@ -21,6 +21,10 @@ If you use a bibliography, prepare `ref.bib` (or change `\bibliography{ref}` in 
 
 Added the minimal-macro style file `omphys.sty` for other class files.
 
+If you want to reuse only the personal physics/math macros with another class
+such as `article` or `jsarticle`, load `omphys.sty` separately.
+The style file defines only lightweight macros.
+
 How to use:
 ```
 \documentclass{article}
