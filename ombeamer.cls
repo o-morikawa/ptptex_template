@@ -1,6 +1,7 @@
 %%
 %% ombeamer.cls
 %% Personal Beamer class for Okuto Morikawa.
+%% Updated: 2026-08-18 00:10 JST
 %%
 %% Examples:
 %%   \documentclass[12pt,lang=en]{ombeamer}
@@ -12,7 +13,7 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{ombeamer}[2026/08/17 OM personal Beamer class]
+\ProvidesClass{ombeamer}[2026/08/18 OM personal Beamer class]
 
 %% ------------------------------------------------------------
 %% Class options
@@ -175,14 +176,114 @@
 \fi
 
 %% ------------------------------------------------------------
-%% PDF metadata
+%% Poster page helper
 %% ------------------------------------------------------------
 
-%% Redefine these commands in the preamble when needed.
+%% Default width of each column in \Poster.
+%% Users may redefine this in the preamble if desired, e.g.
+%%   \renewcommand{\postercolumnwidth}{0.48\columnwidth}
+\newcommand{\postercolumnwidth}{0.494\columnwidth}
+
+%% \Poster{<left column>}{<right column>}
+%%
+%% In poster mode this expands to
+%%   frame -> \maketitle -> columns -> left/right columns.
+%% Paragraph breaks are allowed in both arguments.
+\NewDocumentCommand{\Poster}{+m +m}{%
+  \ifombeamer@poster
+    \begin{frame}%
+      \maketitle
+      \begin{columns}%
+        \begin{column}{\postercolumnwidth}%
+          #1%
+        \end{column}%
+        \begin{column}{\postercolumnwidth}%
+          #2%
+        \end{column}%
+      \end{columns}%
+    \end{frame}%
+  \else
+    \ClassError{ombeamer}{\string\Poster\space is available only in poster mode}{%
+      Add the `poster' option to \string\documentclass, or use an ordinary
+      Beamer frame instead.%
+    }%
+  \fi
+}
+
+%% ------------------------------------------------------------
+%% Title, author, affiliation, and PDF metadata
+%% ------------------------------------------------------------
+
+%% Public metadata values.  The helper commands below update them.
 \newcommand{\pdfmetatitle}{}
 \newcommand{\pdfmetasubject}{}
 \newcommand{\pdfmetaauthor}{Okuto Morikawa}
+\newcommand{\pdfmetadate}{}
+\newcommand{\pdfmetadateshort}{}
 \newcommand{\pdfmetakeywords}{Last updated on \today}
+
+%% \Maintitle[Short title]{Full title}
+%% sets both the Beamer title and the PDF metadata title.
+\NewDocumentCommand{\Maintitle}{o m}{%
+  \gdef\pdfmetatitle{#2}%
+  \IfNoValueTF{#1}{%
+    \title{#2}%
+  }{%
+    \title[#1]{#2}%
+  }%
+}
+
+%% \Subject{Subject}
+%% sets the PDF metadata subject.
+\NewDocumentCommand{\Subject}{m}{%
+  \gdef\pdfmetasubject{#1}%
+}
+
+%% \Author[Short author]{Full author}
+%% sets both the Beamer author and the PDF metadata author.
+\NewDocumentCommand{\Author}{o m}{%
+  \gdef\pdfmetaauthor{#2}%
+  \IfNoValueTF{#1}{%
+    \author{#2}%
+  }{%
+    \author[#1]{#2}%
+  }%
+}
+
+%% \Date[Short date]{Full date}
+%% sets the Beamer date and stores both full and short forms.
+\NewDocumentCommand{\Date}{o m}{%
+  \gdef\pdfmetadate{#2}%
+  \IfNoValueTF{#1}{%
+    \gdef\pdfmetadateshort{#2}%
+    \date{#2}%
+  }{%
+    \gdef\pdfmetadateshort{#1}%
+    \date[#1]{#2}%
+  }%
+}
+
+%% \Affil[Short affiliation]{Full affiliation}
+%% sets the Beamer institute.  In normal slide mode, the full
+%% affiliation is displayed in \small, as in the former \affil helper.
+\NewDocumentCommand{\Affil}{o m}{%
+  \IfNoValueTF{#1}{%
+    \ifombeamer@poster
+      \institute[#2]{#2}%
+    \else
+      \institute[#2]{{\small #2}}%
+    \fi
+  }{%
+    \ifombeamer@poster
+      \institute[#1]{#2}%
+    \else
+      \institute[#1]{{\small #2}}%
+    \fi
+  }%
+}
+
+%% Backward-compatible lowercase alias.
+\let\affil\Affil
 
 \AtEndPreamble{%
   \hypersetup{%
@@ -194,22 +295,6 @@
     allbordercolors={structure!60},%
     urlbordercolor={0 1 0}%
   }%
-}
-
-%% ------------------------------------------------------------
-%% Institute helper
-%% ------------------------------------------------------------
-
-%% \affil{RIKEN iTHEMS}
-%% is equivalent to
-%% \institute[RIKEN iTHEMS]{{\small RIKEN iTHEMS}}.
-%% A later \institute command naturally overwrites it.
-\newcommand{\affil}[1]{%
-  \ifombeamer@poster
-    \institute[#1]{#1}%
-  \else
-    \institute[#1]{{\small #1}}%
-  \fi
 }
 
 %% ------------------------------------------------------------

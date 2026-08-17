@@ -1,0 +1,155 @@
+%%
+%% omreply.sty
+%% Minimal style for referee-response letters.
+%%
+%% Usage:
+%%   \documentclass[11pt]{article}
+%%   \usepackage{omphys}
+%%   \usepackage{omreply}
+%%
+%% omphys.sty must be loaded before this package.
+%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{omreply}[2026/08/18 OM referee-response style]
+
+\makeatletter
+
+%% ------------------------------------------------------------
+%% Options
+%% ------------------------------------------------------------
+
+\newif\ifomreply@geometry
+\newif\ifomreply@romanequations
+
+\omreply@geometrytrue
+\omreply@romanequationstrue
+
+\DeclareOption{geometry}{\omreply@geometrytrue}
+\DeclareOption{nogeometry}{\omreply@geometryfalse}
+\DeclareOption{romanequations}{\omreply@romanequationstrue}
+\DeclareOption{arabicequations}{\omreply@romanequationsfalse}
+
+\ProcessOptions\relax
+
+%% ------------------------------------------------------------
+%% Dependency: omphys.sty is intentionally loaded separately.
+%% ------------------------------------------------------------
+
+\@ifpackageloaded{omphys}{}{%
+  \PackageError{omreply}
+    {Package omphys must be loaded before omreply}
+    {Load omphys first, e.g. \string\usepackage{omphys}\MessageBreak
+     followed by \string\usepackage{omreply}.}%
+}
+
+%% ------------------------------------------------------------
+%% Page layout and equation numbering
+%% ------------------------------------------------------------
+
+\ifomreply@geometry
+  \RequirePackage[
+    top=30truemm,
+    bottom=30truemm,
+    left=25truemm,
+    right=25truemm
+  ]{geometry}
+\fi
+
+\ifomreply@romanequations
+  \renewcommand{\theequation}{\roman{equation}}
+\fi
+
+%% ------------------------------------------------------------
+%% Tunable appearance
+%% ------------------------------------------------------------
+
+\newlength{\replyblocksep}
+\setlength{\replyblocksep}{0.5\baselineskip}
+
+\providecommand{\replyrefereecolor}{blue}
+
+%% ------------------------------------------------------------
+%% Cover-letter helpers
+%% ------------------------------------------------------------
+
+\newcommand{\replydate}[1][\today]{%
+  \par
+  \vspace{\replyblocksep}%
+  \begin{flushright}
+    #1
+  \end{flushright}%
+}
+
+\newcommand{\replysalutation}[1][Editor]{%
+  \par\noindent
+  Dear #1,%
+  \par\medskip
+}
+
+\newcommand{\replyclosing}[1]{%
+  \par\medskip
+  \noindent Sincerely,%
+  \par\noindent
+  #1%
+  \par
+}
+
+%% ------------------------------------------------------------
+%% Point-by-point reply structure
+%% ------------------------------------------------------------
+
+\newcommand{\replyheading}[1]{%
+  \part*{#1}%
+}
+
+\newcommand{\replytoreferee}[1][the referee]{%
+  \replyheading{Reply to #1 and summary of changes made}%
+}
+
+%% Backward-compatible one-block command.
+%% For new documents, refereecomment is preferable because it naturally
+%% accepts several paragraphs and displayed equations.
+\newcommand{\referee}[1]{%
+  \par\noindent
+  \begingroup
+    \color{\replyrefereecolor}\slshape
+    #1\par
+  \endgroup
+}
+
+\newenvironment{refereecomment}
+  {%
+    \par\addvspace{\replyblocksep}%
+    \noindent
+    \begingroup
+      \color{\replyrefereecolor}\slshape
+      \ignorespaces
+  }
+  {%
+      \par
+    \endgroup
+    \addvspace{\replyblocksep}%
+    \ignorespacesafterend
+  }
+
+\newenvironment{authorresponse}
+  {%
+    \par\addvspace{\replyblocksep}%
+    \noindent
+    \ignorespaces
+  }
+  {%
+    \par\addvspace{\replyblocksep}%
+    \ignorespacesafterend
+  }
+
+%% A compact separator is occasionally useful between the general report
+%% and the numbered point-by-point comments.
+\newcommand{\replysep}{%
+  \par\addvspace{\replyblocksep}%
+}
+
+\makeatother
+
+\endinput
