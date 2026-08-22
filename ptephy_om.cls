@@ -268,8 +268,6 @@
 \ifendnotes%
 \theendnotes%
 \fi%
-   \message{Setting LastPage}%
-   \clearpage\lastpage@putlabel%
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Article Identification %%%%%%%%%%%%%%%%%%%%%%%%%%%%
