@@ -4,14 +4,14 @@
 %%
 %% Usage:
 %%   \documentclass[11pt]{article}
-%%   \usepackage{omphys}
 %%   \usepackage{omreply}
 %%
-%% omphys.sty must be loaded before this package.
+%% omphys.sty is optional and may be loaded independently when its
+%% physics/math macros are needed.
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{omreply}[2026/08/18 OM referee-response style]
+\ProvidesPackage{omreply}[2026/08/29 OM referee-response style]
 
 \makeatletter
 
@@ -33,15 +33,10 @@
 \ProcessOptions\relax
 
 %% ------------------------------------------------------------
-%% Dependency: omphys.sty is intentionally loaded separately.
+%% Required package
 %% ------------------------------------------------------------
 
-\@ifpackageloaded{omphys}{}{%
-  \PackageError{omreply}
-    {Package omphys must be loaded before omreply}
-    {Load omphys first, e.g. \string\usepackage{omphys}\MessageBreak
-     followed by \string\usepackage{omreply}.}%
-}
+\RequirePackage{xcolor}
 
 %% ------------------------------------------------------------
 %% Page layout and equation numbering
@@ -67,7 +62,21 @@
 \newlength{\replyblocksep}
 \setlength{\replyblocksep}{0.5\baselineskip}
 
+
+\definecolor{editorbrown}{RGB}{125,70,20}
+\providecommand{\replyeditorcolor}{editorbrown}
 \providecommand{\replyrefereecolor}{blue}
+
+%% ------------------------------------------------------------
+%% Manuscript metadata
+%% ------------------------------------------------------------
+
+%% These defaults remain conspicuous if a template value is not replaced.
+%% Define them before loading omreply, or renew them afterwards.
+\providecommand{\manuscriptID}{MANUSCRIPT ID}
+\providecommand{\Title}{MANUSCRIPT TITLE}
+\providecommand{\Journal}{JOURNAL}
+\providecommand{\Authors}{AUTHOR NAME(S)}
 
 %% ------------------------------------------------------------
 %% Cover-letter helpers
@@ -103,13 +112,25 @@
   \part*{#1}%
 }
 
+\newcommand{\replytoeditor}[1][the Editor]{%
+  \replyheading{Reply to #1}%
+}
+
 \newcommand{\replytoreferee}[1][the referee]{%
   \replyheading{Reply to #1 and summary of changes made}%
 }
 
-%% Backward-compatible one-block command.
-%% For new documents, refereecomment is preferable because it naturally
-%% accepts several paragraphs and displayed equations.
+%% Backward-compatible one-block commands.
+%% For new documents, editorcomment and refereecomment are preferable because
+%% they naturally accept several paragraphs and displayed equations.
+\newcommand{\editor}[1]{%
+  \par\noindent
+  \begingroup
+    \color{\replyeditorcolor}\slshape
+    #1\par
+  \endgroup
+}
+
 \newcommand{\referee}[1]{%
   \par\noindent
   \begingroup
@@ -117,6 +138,21 @@
     #1\par
   \endgroup
 }
+
+\newenvironment{editorcomment}
+  {%
+    \par\addvspace{\replyblocksep}%
+    \noindent
+    \begingroup
+      \color{\replyeditorcolor}\slshape
+      \ignorespaces
+  }
+  {%
+      \par
+    \endgroup
+    \addvspace{\replyblocksep}%
+    \ignorespacesafterend
+  }
 
 \newenvironment{refereecomment}
   {%
